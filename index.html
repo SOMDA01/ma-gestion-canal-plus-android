@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#123b75"><title>Ma gestion Canal+ — version 12</title>
+<style>
+:root{--blue:#123b75;--blue2:#245bb2;--teal:#0f766e;--bg:#f3f6fc;--ink:#18253b;--muted:#65748b;--line:#dce5f1;--card:#fff;--orange:#b45309;--red:#b42318;--shadow:0 8px 26px rgba(25,55,100,.08)}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top left,#e7efff 0,transparent 36%),var(--bg);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.45}
+header{background:linear-gradient(125deg,#102d5b 0%,#174a91 56%,#087e8b 120%);color:#fff;padding:24px 17px 27px;border-radius:0 0 26px 26px;box-shadow:0 8px 24px #102f6325;position:relative;overflow:hidden}
+header:after{content:"";position:absolute;width:180px;height:180px;border:1px solid #ffffff30;border-radius:50%;right:-55px;top:-70px;box-shadow:0 0 0 24px #ffffff08,0 0 0 48px #ffffff08}
+header h1{margin:0 0 5px;font-size:clamp(22px,5vw,29px);letter-spacing:-.5px;position:relative;z-index:1}
+header p{margin:0;font-size:13px;color:#dceaff;position:relative;z-index:1}
+main{max-width:940px;margin:auto;padding:15px 13px 110px}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat,.panel,.client{background:var(--card);border:1px solid #e0e8f3;border-radius:17px;padding:15px;margin:10px 0;box-shadow:var(--shadow)}
+.stat{position:relative;overflow:hidden}
+.stat:after{content:"";position:absolute;right:-16px;bottom:-22px;width:75px;height:75px;border-radius:50%;background:#eaf1ff}
+.stat small{display:block;color:var(--muted);font-size:12px;position:relative;z-index:1}
+.stat strong{display:block;font-size:clamp(22px,5vw,29px);margin-top:5px;letter-spacing:-.6px;position:relative;z-index:1}
+nav{display:flex;gap:7px;overflow-x:auto;padding:14px 1px 13px;scrollbar-width:thin;position:sticky;top:0;z-index:5;background:#f3f6fceF;backdrop-filter:blur(10px)}
+nav button,button{font:inherit;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease,background .12s ease}
+nav button{border:1px solid #dce5f1;background:#fff;border-radius:999px;padding:9px 13px;white-space:nowrap;font-size:13px;font-weight:700;color:#40536f;box-shadow:0 2px 6px #193e7008}
+nav button.active,nav button:focus-visible,.primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;border-color:transparent}
+nav button.active{box-shadow:0 4px 12px #123b7530}
+button:hover{transform:translateY(-1px)}
+h2{font-size:19px;letter-spacing:-.25px;margin:5px 0 13px}
+h3{font-size:16px;letter-spacing:-.15px;margin:0 0 7px}
+p{margin:8px 0}
+.muted,.hint{color:var(--muted);font-size:13px}.hint{line-height:1.6}
+label{display:block;font-size:13px;font-weight:700;margin:12px 0;color:#34445d}
+input,textarea,select{width:100%;padding:12px;border:1px solid #cbd7e7;border-radius:11px;font:inherit;margin-top:5px;background:#fff;color:var(--ink);outline:none;transition:border .15s,box-shadow .15s}
+input:focus,textarea:focus,select:focus{border-color:#4b7fd0;box-shadow:0 0 0 3px #4b7fd01c}
+input[type=radio],input[type=checkbox]{width:auto;margin:0;accent-color:var(--blue);transform:scale(1.06)}
+.choice{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff}
+.choice-list{display:grid;gap:8px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}.full{grid-column:1/-1}
+.primary,.secondary,.danger,.small{border:0;border-radius:11px;padding:11px 14px;font-weight:750}
+.primary{box-shadow:0 4px 10px #123b7520}
+.secondary,.small{background:#e9f0fc;color:var(--blue);border:1px solid #dbe7fb}
+.danger{background:#fff0ef;color:var(--red);border:1px solid #ffd5d1}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.small{font-size:12px;padding:8px 11px}
+.hidden{display:none!important}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;padding:5px 9px;border-radius:999px;background:#e8efff;color:#244f9a;font-weight:800;white-space:nowrap}
+.warn{background:#fff3d6;color:#8a5b00}.bad{background:#ffebe9;color:#b42318}.good{background:#dcfce7;color:#166534}
+.topline{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.note{background:#fff8e8;border:1px solid #f5dfaa;border-radius:12px;padding:11px 12px;color:#79520b;font-size:13px;line-height:1.5}
+.empty{background:#fff;border:1px dashed #cbd7e7;border-radius:15px;padding:22px;text-align:center;color:var(--muted);font-size:14px;margin:10px 0}
+details{margin-top:10px;border-top:1px solid var(--line);padding-top:10px}
+details summary{cursor:pointer;font-weight:750;color:var(--blue);padding:7px 0}
+hr{border:0;border-top:1px solid var(--line);margin:14px 0}
+section{animation:appear .18s ease-out}
+@keyframes appear{from{opacity:.65;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:620px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}main{padding-left:20px;padding-right:20px}header{padding-left:max(20px,calc((100% - 900px)/2));padding-right:20px}}
+@media(max-width:480px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.stat,.panel,.client{padding:13px}.topline{gap:7px}}
+</style></head><body>
+<header><h1>Ma gestion Canal+</h1><p>Clients, abonnements et réabonnements</p></header>
+<main>
+<section id="home"><div class="stats"><div class="stat"><small>Clients</small><strong id="count">0</strong></div><div class="stat"><small>À renouveler sous 7 jours</small><strong id="soon">0</strong></div><div class="stat"><small>Expirés</small><strong id="expired">0</strong></div><div class="stat"><small>Réabonnements enregistrés</small><strong id="renewcount">0</strong></div></div><div class="panel"><h2>Priorités</h2><div id="priority"></div><button class="primary" onclick="newClient()">＋ Ajouter un client</button></div></section>
+<section id="clients" class="hidden"><div class="topline"><h2>Mes clients</h2><button class="primary" onclick="newClient()">＋ Ajouter</button></div><input id="search" placeholder="Rechercher nom, téléphone, abonné ou décodeur…" oninput="renderClients()"><div id="clientList"></div></section>
+<section id="recruitment" class="hidden"><h2>Recrutement</h2><p class="hint">Retrouve les nouveaux et anciens abonnés que vous avez enregistrés. Après avoir traité le dossier dans la base Canal+, marque-le comme enregistré.</p><div class="actions"><button class="secondary" onclick="setRecruitFilter('all')">Tous</button><button class="secondary" onclick="setRecruitFilter('nouveau')">Nouveaux</button><button class="secondary" onclick="setRecruitFilter('ancien')">Anciens</button><button class="secondary" onclick="setRecruitFilter('pending')">À traiter</button></div><div id="recruitmentList"></div></section>
+<section id="relances" class="hidden"><h2>Clients à relancer</h2><p class="hint">Les abonnements expirés ou arrivant à échéance dans les 7 jours.</p><div id="reminders"></div></section>
+<section id="form" class="hidden"><h2 id="formTitle">Ajouter un client</h2><form id="clientForm"><input id="id" type="hidden"><div class="grid">
+<label class="full">Nom complet *<input id="name" required></label>
+<div class="full"><label>Type de recrutement * (choisis une seule option)</label><div class="choice-list"><label class="choice"><input type="radio" name="recruitmentType" value="nouveau" required> Nouveau abonné / nouveau recrutement</label><label class="choice"><input type="radio" name="recruitmentType" value="ancien" required> Ancien abonné / ancien recrutement</label></div><p class="hint">Le dossier apparaîtra dans l’onglet Recrutement pour que tu puisses le traiter dans la base Canal+.</p></div>
+<label>Téléphone 1 *<input id="phone" type="tel" required></label><label>Téléphone 2<input id="phone2" type="tel"></label>
+<label>WhatsApp du client<input id="whatsapp" type="tel"></label><label>Numéro d'abonné *<input id="subscriber" required></label>
+<label>Numéro du décodeur<input id="decoder"></label><label class="full">Localisation / adresse<input id="location"></label>
+<div class="full"><label>Formule de l'abonnement *</label><div class="choice-list">
+<label class="choice"><input type="radio" name="plan" value="Accès" required> Accès</label>
+<label class="choice"><input type="radio" name="plan" value="Évasion"> Évasion</label>
+<label class="choice"><input type="radio" name="plan" value="Accès +"> Accès +</label>
+<label class="choice"><input type="radio" name="plan" value="Tout Canal +"> Tout Canal +</label>
+<label class="choice"><input type="radio" name="plan" value="Évasion + Options"> Évasion + Options</label>
+<label class="choice"><input type="radio" name="plan" value="Accès + Options"> Accès + Options</label></div></div>
+<label>Date de début<input id="start" type="date" readonly></label><label>Date de fin calculée<input id="end" type="date" readonly></label>
+<label>Prix de l’abonnement (FCFA)<input id="planPrice" type="number" min="0" step="1" readonly placeholder="Choisis une formule"></label><label>Montant reçu (FCFA)<input id="amountReceived" type="number" min="0" step="1" placeholder="0"></label><label>Montant restant à payer (FCFA)<input id="amountDue" type="number" min="0" step="1" placeholder="Calcul automatique" readonly></label>
+<label>Statut du paiement<select id="paymentStatus"><option value="non renseigne">Non renseigné</option><option value="non paye">Non payé</option><option value="partiel">Paiement partiel</option><option value="paye">Payé</option></select></label><label>Mode de paiement<select id="paymentMethod"><option value="">Non renseigné</option><option>Espèces</option><option>Wave</option><option>Orange Money</option><option>MTN Money</option><option>Moov Money</option><option>Virement</option><option>Autre</option></select></label>
+<label class="full">Notes<textarea id="notes" rows="2"></textarea></label></div><p class="hint">Durée prévue : 30 jours. La date de fin est calculée automatiquement.</p><div class="actions"><button class="primary" type="submit">Enregistrer</button><button class="secondary" type="button" onclick="tab('clients')">Annuler</button></div></form></section>
+<section id="detail" class="hidden"><div class="topline"><h2>Fiche client</h2><button class="secondary" onclick="tab('clients')">Retour</button></div><div id="detailContent"></div></section>
+<section id="renewals" class="hidden"><h2>Récapitulatif des réabonnements</h2><p class="hint">Les réabonnements d’un même abonné sont regroupés sur une seule fiche. La bulle indique le nombre d’opérations ; ouvre « Voir l’historique complet » pour consulter chaque opération.</p><div id="renewalList"></div></section>
+<section id="payments" class="hidden"><h2>Suivi des paiements</h2><p class="hint">Vérifie les montants restants et les paiements non réglés.</p><div class="stats"><div class="stat"><small>Dossiers à vérifier</small><strong id="paymentPendingCount">0</strong></div><div class="stat"><small>Total restant déclaré</small><strong id="paymentDueTotal">0</strong></div></div><div class="actions"><button class="secondary" onclick="renderPayments('all')">Tous les dossiers</button><button class="secondary" onclick="renderPayments('pending')">À vérifier</button></div><div id="paymentList"></div></section>
+<section id="activity" class="hidden"><h2>Journal des opérations</h2><p class="hint">Historique local des actions effectuées sur cet appareil. Il ne remplace pas encore un journal partagé en ligne.</p><div id="activityList"></div></section>
+<section id="settings" class="hidden"><h2>Paramètres</h2>
+<div class="panel"><h2>Connexion et synchronisation Supabase</h2><p class="note">Version 13 de test : synchronisation automatique après les modifications, avec vérification régulière des données partagées. Les données locales ne sont pas effacées.</p><div id="cloudStatus" class="pill warn">Non connecté</div><label>Adresse e-mail<input id="cloudEmail" type="email" autocomplete="username" placeholder="ton adresse e-mail"></label><label>Mot de passe Supabase<input id="cloudPassword" type="password" autocomplete="current-password" placeholder="Mot de passe de ce compte"></label><div class="actions"><button class="primary" onclick="cloudLogin()">Se connecter</button><button class="secondary" onclick="cloudLogout()">Se déconnecter</button><button class="secondary" onclick="cloudSync()">Synchroniser maintenant</button></div><p id="cloudMessage" class="hint">Connexion non testée. Utilise le compte Supabase existant, pas le mot de passe Gmail si celui-ci est différent.</p><p class="hint">La synchronisation automatique est expérimentale : garde Internet activé et laisse l’application ouverte. Les changements sont envoyés automatiquement et l’application vérifie périodiquement les données partagées. Le bouton reste disponible pour une synchronisation manuelle.</p></div><div class="panel"><h2>Profil de cet appareil</h2><label>Nom de la personne qui utilise l’application<input id="operator" placeholder="Ex. Somda ou nom du collègue"></label><p class="hint">Ce nom sera ajouté à l’historique de chaque réabonnement effectué depuis cet appareil.</p></div><div class="panel"><h2>Message WhatsApp après une opération</h2><p class="hint">Active cette option sur le téléphone du collègue pour qu’il puisse t’envoyer les détails après un réabonnement ou un nouveau recrutement. Tu peux la désactiver sur ton téléphone.</p><label class="choice"><input id="autoMessage" type="checkbox"> Proposer l’envoi WhatsApp après chaque réabonnement ou recrutement</label><label>Ton numéro WhatsApp de destination<input id="target" placeholder="2250700000000" inputmode="numeric"></label><label>Nom du point de vente<input id="shop"></label><button class="primary" onclick="saveSettings()">Enregistrer les paramètres</button><p class="note">Pour éviter les envois non autorisés, WhatsApp s’ouvrira avec le message préparé : la personne devra confirmer l’envoi. L’application ne peut pas envoyer un WhatsApp silencieusement.</p></div><div class="panel"><h2>Comptes et synchronisation commune</h2><p class="note"><b>État : non connecté au cloud.</b> Les comptes personnels, la base de données en ligne, la synchronisation automatique et les droits d’accès ne sont pas encore actifs dans cette version. Les réglages et l’historique ci-dessus restent enregistrés sur cet appareil tant que le service en ligne n’est pas connecté.</p><p class="hint">Quand tu auras créé ton nouveau compte Gmail, nous pourrons passer à la configuration de l’hébergement et de la base de données partagée. Ne saisis pas ici ton mot de passe Gmail.</p></div></section>
+<section id="backup" class="hidden"><h2>Sauvegarde</h2><div class="panel"><p class="hint">Les données restent sur cet appareil. Fais une sauvegarde complète régulièrement et conserve le fichier dans un endroit sûr.</p><div class="actions"><button class="primary" onclick="exportBackup()">Télécharger la sauvegarde complète</button><button class="secondary" onclick="exportCSV()">Exporter les clients en CSV</button></div><label>Restaurer une sauvegarde JSON<input id="backupFile" type="file" accept=".json,application/json" onchange="importBackup(event)"></label><p class="note">La restauration remplace les clients, les réabonnements et les paramètres présents sur cet appareil. Fais une sauvegarde avant de restaurer.</p></div></section>
+<nav><button onclick="tab('home')" class="active">Accueil</button><button onclick="tab('clients')">Clients</button><button onclick="tab('relances')">Relances</button><button onclick="tab('recruitment')">Recrutement</button><button onclick="tab('renewals')">Réabonnements</button><button onclick="tab('payments')">Paiements</button><button onclick="tab('activity')">Journal</button><button onclick="tab('settings')">Paramètres</button><button onclick="tab('backup')">Sauvegarde</button></nav>
+</main><footer><button onclick="tab('home')"><span>⌂</span>Accueil</button><button onclick="tab('clients')"><span>♙</span>Clients</button><button onclick="tab('relances')"><span>◷</span>Relances</button><button onclick="tab('recruitment')"><span>＋</span>Recrutement</button><button onclick="tab('renewals')"><span>↻</span>Réabonnements</button><button onclick="tab('payments')"><span>₣</span>Paiements</button><button onclick="tab('activity')"><span>☷</span>Journal</button><button onclick="tab('settings')"><span>⚙</span>Paramètres</button></footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL="https://sbfgacjasofrruxdghcj.supabase.co";
+const SUPABASE_KEY="sb_publishable_J-rwhNT0DiaVNJIWLATqnw_otvlHfck";
+const WORKSPACE_ID="55684de6-5155-4160-b6ea-a4f0021c9187";
+let cloudClient=null, cloudUser=null, cloudBusy=false;
+try { if(window.supabase?.createClient) cloudClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false,storage:window.localStorage}}); } catch(e) {}
+const KEY='canalplus_clients_v4',RK='canalplus_renewals_v4',SK='canalplus_settings_v4',AK='canalplus_activity_v7';
+let clients=read(KEY,[]), renewals=read(RK,[]), settings=read(SK,{}), activity=read(AK,[]);
+const PLAN_MAP={'Accès Plus':'Accès +','Tout Canal Plus':'Tout Canal +','Évasion Plus Options':'Évasion + Options','Accès Plus Plus Maintenant Options':'Accès + Options','Accès +':'Accès +','Tout Canal +':'Tout Canal +','Évasion + Options':'Évasion + Options','Accès + Options':'Accès + Options'};
+const PLAN_PRICES={'Accès':5000,'Évasion':10100,'Accès +':15100,'Tout Canal +':25100,'Évasion + Options':15100,'Accès + Options':17100};
+function selectedPlan(){return document.querySelector('input[name="plan"]:checked')?.value||''}
+function updatePrice(){let plan=selectedPlan(),price=PLAN_PRICES[plan]||0,received=Math.max(0,Number(document.getElementById('amountReceived').value||0));document.getElementById('planPrice').value=price||'';document.getElementById('amountDue').value=price?Math.max(0,price-received):'';let status=document.getElementById('paymentStatus');if(price){status.value=received>=price?'paye':received>0?'partiel':'non paye'}}
+document.querySelectorAll('input[name="plan"]').forEach(r=>r.addEventListener('change',updatePrice));document.getElementById('amountReceived').addEventListener('input',updatePrice);
+clients=clients.map(c=>{let plan=PLAN_MAP[c.plan]||c.plan;return {...c,plan,planPrice:PLAN_PRICES[plan]||Number(c.planPrice||0)}});renewals=renewals.map(r=>{let plan=PLAN_MAP[r.plan]||r.plan;return {...r,plan,planPrice:PLAN_PRICES[plan]||Number(r.planPrice||0)}});
+function read(k,d){try{return JSON.parse(localStorage.getItem(k)||'null')??d}catch(e){return d}}
+function save(){localStorage.setItem(KEY,JSON.stringify(clients));render();scheduleAutoSync()}
+function logAction(action,details=''){activity.unshift({id:String(Date.now())+Math.random().toString(16).slice(2,6),date:new Date().toISOString(),operator:settings.operator||'Utilisateur non renseigné',action,details});activity=activity.slice(0,500);localStorage.setItem(AK,JSON.stringify(activity));renderActivity()}
+function renderPayments(mode='all'){let box=document.getElementById('paymentList');if(!box)return;let arr=clients.filter(c=>mode!=='pending'||((c.paymentStatus||'non renseigne')!=='paye'&&Number(c.amountDue||0)>0)||(mode==='pending'&&(c.paymentStatus==='non paye'||c.paymentStatus==='partiel')));let pending=clients.filter(c=>(c.paymentStatus==='non paye'||c.paymentStatus==='partiel'||Number(c.amountDue||0)>0));document.getElementById('paymentPendingCount').textContent=pending.length;document.getElementById('paymentDueTotal').textContent=pending.reduce((n,c)=>n+Number(c.amountDue||0),0).toLocaleString('fr-FR')+' F';box.innerHTML=arr.length?arr.map(c=>`<div class="client"><div class="topline"><h3>${esc(c.name)}</h3><span class="pill ${(c.paymentStatus==='paye'?'good':(c.paymentStatus==='partiel'?'warn':'bad'))}">${esc(c.paymentStatus||'non renseigne')}</span></div><p>Téléphone : ${esc(c.phone)} · Abonné : ${esc(c.subscriber)}</p><p>Reçu : ${Number(c.amountReceived||0).toLocaleString('fr-FR')} FCFA · Restant : ${Number(c.amountDue||0).toLocaleString('fr-FR')} FCFA</p><p class="muted">Mode : ${esc(c.paymentMethod||'—')}</p><div class="actions"><button class="small" onclick="edit('${c.id}')">Modifier le paiement</button><button class="small" onclick="detail('${c.id}')">Fiche client</button></div></div>`).join(''):'<div class="empty">Aucun dossier de paiement dans cette vue.</div>'}
+function renderActivity(){let box=document.getElementById('activityList');if(!box)return;box.innerHTML=activity.length?activity.map(a=>`<div class="client"><div class="topline"><b>${esc(a.action)}</b><span class="pill">${esc(a.operator)}</span></div><p class="muted">${new Date(a.date).toLocaleString('fr-FR')}</p>${a.details?`<p>${esc(a.details)}</p>`:''}</div>`).join(''):'<div class="empty">Aucune opération enregistrée pour le moment.</div>'}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function iso(d=new Date()){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function date(s){return s?new Date(s+'T12:00:00'):null}
+function fmt(s){let d=date(s);return d&&!isNaN(d)?d.toLocaleDateString('fr-FR'):'—'}
+function days(s){let d=date(s);if(!d)return null;let t=date(iso());return Math.round((d-t)/86400000)}
+function plus(s,n){let d=date(s)||date(iso());d.setDate(d.getDate()+n);return iso(d)}
+function stat(c){let n=days(c.end);if(n===null)return {label:'Date inconnue',cls:''};if(n<0)return {label:'Expiré depuis '+(-n)+' j',cls:'bad'};if(n===0)return {label:'Expire aujourd’hui',cls:'bad'};if(n<=7)return {label:'Expire dans '+n+' j',cls:'warn'};return {label:'À jour',cls:'good'}}
+function card(c){let st=stat(c);return `<div class="client"><div class="topline"><div><h3>${esc(c.name)}</h3><div class="muted">${esc(c.phone)} · Abonné : ${esc(c.subscriber)}</div><div class="muted">Décodeur : ${esc(c.decoder||'—')}</div></div><span class="pill ${st.cls}">${st.label}</span></div><p class="muted">Fin : ${fmt(c.end)}</p><p class="muted">Paiement : ${esc(c.paymentStatus||'Non renseigné')} · Restant : ${Number(c.amountDue||0).toLocaleString('fr-FR')} FCFA</p><div class="actions"><a class="small" href="tel:${encodeURIComponent(c.phone)}" style="text-decoration:none">Appeler</a><button class="small" onclick="detail('${c.id}')">Fiche / réabonner</button><button class="small" onclick="shareClient('${c.id}')">Partager</button></div></div>`}
+function render(){let due=clients.filter(c=>days(c.end)!==null&&days(c.end)<=7),exp=clients.filter(c=>days(c.end)!==null&&days(c.end)<0);document.getElementById('soon').parentElement.querySelector('small').textContent='À renouveler sous 7 jours';document.getElementById('count').textContent=clients.length;document.getElementById('soon').textContent=due.filter(c=>days(c.end)>=0).length;document.getElementById('expired').textContent=exp.length;document.getElementById('renewcount').textContent=renewals.length;document.getElementById('priority').innerHTML=due.length?due.sort((a,b)=>days(a.end)-days(b.end)).slice(0,4).map(card).join(''):'<div class="empty">Aucune échéance proche.</div>';renderClients();renderRecruitment();renderActivity();document.getElementById('reminders').innerHTML=due.length?due.sort((a,b)=>days(a.end)-days(b.end)).map(card).join(''):'<div class="empty">Aucune relance à faire.</div>';document.getElementById('renewalList').innerHTML=renderRenewalGroups()}
+function renewalIdentity(r){
+  const subscriber=String(r.subscriber||'').trim().toLowerCase();
+  if(subscriber) return 'sub:'+subscriber;
+  const phone=String(r.phone||'').replace(/\D/g,'');
+  if(phone) return 'tel:'+phone;
+  return 'name:'+String(r.name||'').trim().toLowerCase();
+}
+function renderRenewalGroups(){
+  const box=document.getElementById('renewalList');
+  if(!renewals.length) return '<div class="empty">Aucun réabonnement enregistré.</div>';
+  const groups=new Map();
+  renewals.forEach(r=>{
+    const key=renewalIdentity(r);
+    if(!groups.has(key)) groups.set(key,[]);
+    groups.get(key).push(r);
+  });
+  const sorted=[...groups.entries()].map(([key,items])=>{
+    items.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+    return {key,items,latest:items[0]};
+  }).sort((a,b)=>String(b.latest.date||'').localeCompare(String(a.latest.date||'')));
+  return sorted.map((g,index)=>{
+    const r=g.latest, items=g.items;
+    const count=items.length;
+    const history=items.map(item=>`<div class="panel" style="margin:8px 0">
+      <div class="topline"><b>${esc(fmt(item.date))}</b><span class="pill">${esc(item.paymentStatus||'non paye')}</span></div>
+      <p>Formule : <b>${esc(item.plan||'—')}</b> · Prix : ${Number(item.planPrice||PLAN_PRICES[item.plan]||0).toLocaleString('fr-FR')} FCFA</p>
+      <p>Reçu : ${Number(item.amountReceived||0).toLocaleString('fr-FR')} FCFA · Restant : ${Number(item.amountDue||0).toLocaleString('fr-FR')} FCFA</p>
+      <p>Nouvelle date de fin : ${esc(fmt(item.end))}</p>
+      <p class="muted">Effectué par : ${esc(item.operator||'Utilisateur non renseigné')}</p>
+      <button class="small" onclick="shareRenewal('${String(item.id||'').replace(/'/g,'')}')">Partager cette opération</button>
+    </div>`).join('');
+    return `<div class="client">
+      <div class="topline"><h3>${esc(r.name||'Client sans nom')}</h3><span class="pill good" title="Nombre de réabonnements">${count} opération${count>1?'s':''}</span></div>
+      <div class="muted">${esc(r.phone||'Téléphone non renseigné')} · Abonné : ${esc(r.subscriber||'Non renseigné')}</div>
+      <p>Dernière formule : <b>${esc(r.plan||'—')}</b></p>
+      <p>Dernier réabonnement : ${esc(fmt(r.date))} · Nouvelle fin : ${esc(fmt(r.end))}</p>
+      <details><summary>Voir l’historique complet (${count})</summary>${history}</details>
+    </div>`;
+  }).join('');
+}
+function renderClients(){let q=(document.getElementById('search')?.value||'').toLowerCase();let a=clients.filter(c=>[c.name,c.phone,c.phone2,c.whatsapp,c.subscriber,c.decoder,c.location].some(v=>String(v||'').toLowerCase().includes(q)));document.getElementById('clientList').innerHTML=a.length?a.map(card).join(''):'<div class="empty">Aucun client trouvé.</div>'}
+function tab(id){['home','clients','relances','recruitment','form','detail','renewals','payments','activity','settings','backup'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));if(id==='clients')renderClients();if(id==='recruitment')renderRecruitment();if(id==='activity')renderActivity();if(id==='payments')renderPayments('all');if(id==='settings'){document.getElementById('target').value=settings.target||'';document.getElementById('shop').value=settings.shop||'';document.getElementById('operator').value=settings.operator||'';document.getElementById('autoMessage').checked=!!settings.autoMessage}window.scrollTo(0,0)}
+function newClient(){document.getElementById('clientForm').reset();document.getElementById('id').value='';document.getElementById('planPrice').value='';document.getElementById('amountDue').value='';document.getElementById('formTitle').textContent='Ajouter un client';document.getElementById('start').value=iso();document.getElementById('end').value=plus(iso(),30);document.querySelector('input[name="recruitmentType"][value="nouveau"]').checked=true;tab('form')}
+function val(id){return document.getElementById(id).value.trim()}
+document.getElementById('clientForm').addEventListener('submit',e=>{e.preventDefault();let id=val('id'),old=clients.find(c=>c.id===id),plan=document.querySelector('input[name="plan"]:checked'),type=document.querySelector('input[name="recruitmentType"]:checked');if(!plan){alert('Choisis une formule.');return}if(!type){alert('Choisis Nouveau abonné ou Ancien abonné.');return}let duplicate=clients.find(c=>c.id!==id&&((val('subscriber')&&String(c.subscriber||'').trim()===val('subscriber'))||(val('phone')&&String(c.phone||'').replace(/\D/g,'')===val('phone').replace(/\D/g,''))));if(duplicate&&!confirm('Attention : un client avec le même numéro d’abonné ou téléphone existe déjà ('+duplicate.name+'). Veux-tu quand même enregistrer ?'))return;let c={id:id||String(Date.now()),name:val('name'),phone:val('phone'),phone2:val('phone2'),whatsapp:val('whatsapp'),subscriber:val('subscriber'),decoder:val('decoder'),location:val('location'),plan:plan.value,planPrice:PLAN_PRICES[plan.value]||0,start:val('start')||iso(),end:val('end')||plus(iso(),30),notes:val('notes'),amountReceived:Number(val('amountReceived')||0),amountDue:Math.max(0,(PLAN_PRICES[plan.value]||0)-Number(val('amountReceived')||0)),paymentStatus:(Number(val('amountReceived')||0)>=(PLAN_PRICES[plan.value]||Infinity)?'paye':Number(val('amountReceived')||0)>0?'partiel':'non paye'),paymentMethod:val('paymentMethod'),recruitmentType:type.value,recruitmentStatus:old?.recruitmentStatus||'pending',recruitmentDate:old?.recruitmentDate||iso(),recruitmentOperator:old?.recruitmentOperator||settings.operator||'Utilisateur non renseigné'};if(old){clients=clients.map(x=>x.id===id?c:x);logAction('Fiche client modifiée',c.name+' · Abonné '+c.subscriber)}else{clients.push(c);logAction('Client ajouté',c.name+' · '+(type.value==='nouveau'?'Nouveau recrutement':'Ancien abonné'))}save();if(!old){tab('recruitment');if(settings.autoMessage){let label=type.value==='nouveau'?'NOUVEAU ABONNÉ / NOUVEAU RECRUTEMENT':'ANCIEN ABONNÉ / ANCIEN RECRUTEMENT';let msg=[label,`Ajouté par : ${c.recruitmentOperator}`,`Nom : ${c.name}`,c.phone&&`Téléphone 1 : ${c.phone}`,c.phone2&&`Téléphone 2 : ${c.phone2}`,c.whatsapp&&`WhatsApp client : ${c.whatsapp}`,c.subscriber&&`Numéro d’abonné : ${c.subscriber}`,c.decoder&&`Numéro du décodeur : ${c.decoder}`,c.location&&`Adresse : ${c.location}`,`Formule : ${c.plan}`,`Prix de l’abonnement : ${Number(c.planPrice||PLAN_PRICES[c.plan]||0).toLocaleString('fr-FR')} FCFA`,`Date : ${fmt(c.recruitmentDate)}`].filter(Boolean).join('\n');shareText(msg,settings.target||'')}}else tab('clients')});
+function edit(id){let c=clients.find(x=>x.id===id);if(!c)return;document.getElementById('clientForm').reset();['name','phone','phone2','whatsapp','subscriber','decoder','location','start','end','notes','amountReceived','amountDue','paymentStatus','paymentMethod','planPrice'].forEach(k=>{let el=document.getElementById(k);if(el)el.value=c[k]??(k==='paymentStatus'?'non renseigne':'')});document.getElementById('id').value=id;document.querySelectorAll('input[name="plan"]').forEach(r=>r.checked=r.value===c.plan);updatePrice();document.querySelectorAll('input[name="recruitmentType"]').forEach(r=>r.checked=r.value===(c.recruitmentType||'ancien'));document.getElementById('formTitle').textContent='Modifier le client';tab('form')}
+function detail(id){let c=clients.find(x=>x.id===id);if(!c)return;let st=stat(c);document.getElementById('detailContent').innerHTML=`<div class="client"><h3>${esc(c.name)}</h3><p>Téléphone 1 : ${esc(c.phone)}</p><p>Téléphone 2 : ${esc(c.phone2||'—')}</p><p>WhatsApp : ${esc(c.whatsapp||'—')}</p><p>Adresse : ${esc(c.location||'—')}</p><p>Numéro d'abonné : ${esc(c.subscriber)}</p><p>Numéro du décodeur : ${esc(c.decoder||'—')}</p><p>Formule : ${esc(c.plan)}</p><p>Prix de l’abonnement : ${Number(c.planPrice||PLAN_PRICES[c.plan]||0).toLocaleString('fr-FR')} FCFA</p><p>Début : ${fmt(c.start)} · Fin : ${fmt(c.end)}</p><p>État : <span class="pill ${st.cls}">${st.label}</span></p><p><b>Paiement :</b> ${esc(c.paymentStatus||'Non renseigné')} · Reçu : ${Number(c.amountReceived||0).toLocaleString('fr-FR')} FCFA · Restant : ${Number(c.amountDue||0).toLocaleString('fr-FR')} FCFA</p><p>Mode de paiement : ${esc(c.paymentMethod||'—')}</p><div class="actions"><a class="primary" style="text-decoration:none" href="tel:${encodeURIComponent(c.phone)}">Appeler</a><button class="secondary" onclick="edit('${c.id}')">Modifier la fiche</button><button class="secondary" onclick="shareClient('${c.id}')">Partager</button></div></div><div class="panel"><h2>Réabonner ce client</h2><p class="hint">Sélectionne une formule. La date de début sera aujourd'hui. Si l'abonnement n'est pas encore expiré, les 30 jours s'ajoutent à sa date de fin actuelle.</p><div class="choice-list" id="renewPlanChoices">${['Accès','Évasion','Accès +','Tout Canal +','Évasion + Options','Accès + Options'].map(p=>`<label class="choice"><input type="radio" name="renewPlan" value="${p}" ${p===c.plan?'checked':''} onchange="updateRenewPrice()"> ${p}</label>`).join('')}</div><label>Prix de l’abonnement (FCFA)<input id="renewPlanPrice" type="number" readonly></label><label>Statut du paiement<select id="renewPaymentStatus" onchange="updateRenewPayment()"><option value="non paye">Non payé</option><option value="paye">Payé</option><option value="partiel">Paiement partiel</option></select></label><label>Montant reçu (FCFA)<input id="renewAmountReceived" type="number" min="0" step="1" value="0" oninput="updateRenewPayment()"></label><label>Montant restant à payer (FCFA)<input id="renewAmountDue" type="number" readonly></label><label>Mode de paiement<select id="renewPaymentMethod"><option value="">Non renseigné</option><option>Espèces</option><option>Wave</option><option>Orange Money</option><option>MTN Money</option><option>Moov Money</option><option>Virement</option><option>Autre</option></select></label><p class="hint">Le prix est fixé automatiquement selon la formule. Si tu choisis « Payé », le montant reçu sera automatiquement égal au prix. Pour un paiement partiel, saisis le montant reçu.</p><div class="actions"><button class="primary" onclick="renew('${c.id}')">Enregistrer le réabonnement</button></div></div>`;tab('detail');updateRenewPrice()}
+function msgClient(c){return ['INFORMATIONS CLIENT CANAL+',c.name&&'Nom : '+c.name,c.phone&&'Téléphone 1 : '+c.phone,c.phone2&&'Téléphone 2 : '+c.phone2,c.whatsapp&&'WhatsApp client : '+c.whatsapp,c.location&&'Adresse : '+c.location,c.subscriber&&'Numéro d’abonné : '+c.subscriber,c.decoder&&'Numéro du décodeur : '+c.decoder,c.plan&&'Formule : '+c.plan,c.start&&'Date de début : '+fmt(c.start),c.end&&'Date de fin : '+fmt(c.end)].filter(Boolean).join('\n')}
+async function shareText(msg,dest=''){if(dest){window.open('https://wa.me/'+dest.replace(/\D/g,'')+'?text='+encodeURIComponent(msg),'_blank');return}if(navigator.share){try{await navigator.share({text:msg});return}catch(e){if(e.name==='AbortError')return}}try{await navigator.clipboard.writeText(msg);alert('Informations copiées. Tu peux les coller dans WhatsApp ou une autre application.')}catch(e){window.prompt('Copie les informations :',msg)}}
+function shareClient(id){let c=clients.find(x=>x.id===id);if(c)shareText(msgClient(c))}
+function updateRenewPrice(){let p=document.querySelector('input[name="renewPlan"]:checked'),price=p?(PLAN_PRICES[p.value]||0):0,priceEl=document.getElementById('renewPlanPrice');if(priceEl)priceEl.value=price;updateRenewPayment()}
+function updateRenewPayment(){let price=Number(document.getElementById('renewPlanPrice')?.value||0),status=document.getElementById('renewPaymentStatus'),receivedEl=document.getElementById('renewAmountReceived'),dueEl=document.getElementById('renewAmountDue');if(!status||!receivedEl||!dueEl)return;let received=Math.max(0,Number(receivedEl.value||0));if(status.value==='paye'){received=price;receivedEl.value=price}else if(status.value==='non paye'){received=0;receivedEl.value=0}else if(status.value==='partiel'&&received>=price&&price>0){received=Math.max(0,price-1);receivedEl.value=received}dueEl.value=Math.max(0,price-received)}
+function renew(id){let c=clients.find(x=>x.id===id),p=document.querySelector('input[name="renewPlan"]:checked');if(!c||!p){alert('Choisis une formule.');return}let price=PLAN_PRICES[p.value]||0,status=document.getElementById('renewPaymentStatus').value,received=Math.max(0,Number(document.getElementById('renewAmountReceived').value||0)),method=document.getElementById('renewPaymentMethod').value;if(status==='paye')received=price;if(status==='non paye')received=0;if(received>price){alert('Le montant reçu ne peut pas dépasser le prix de l’abonnement.');return}if(status==='partiel'&&(received<=0||received>=price)){alert('Pour un paiement partiel, saisis un montant supérieur à 0 et inférieur au prix.');return}if(status==='paye'&&received!==price){alert('Vérifie le montant reçu.');return}let start=iso(),n=days(c.end),base=(n!==null&&n>=0)?c.end:start,end=plus(base,30);c.plan=p.value;c.planPrice=price;c.amountReceived=received;c.amountDue=Math.max(0,price-received);c.paymentStatus=status;c.paymentMethod=method;c.start=start;c.end=end;let r={id:String(Date.now()),name:c.name,phone:c.phone,subscriber:c.subscriber,plan:c.plan,planPrice:price,amountReceived:received,amountDue:Math.max(0,price-received),paymentStatus:status,paymentMethod:method,date:start,end,operator:settings.operator||'Utilisateur non renseigné'};renewals.unshift(r);logAction('Réabonnement effectué',c.name+' · '+c.plan+' · paiement '+status+' · fin '+fmt(end));save();localStorage.setItem(RK,JSON.stringify(renewals));render();scheduleAutoSync();detail(id);let message=['RÉABONNEMENT CANAL+',`Effectué par : ${r.operator}`,`Nom : ${c.name}`,`Téléphone : ${c.phone}`,`Numéro d’abonné : ${c.subscriber}`,`Formule : ${c.plan}`,`Prix de l’abonnement : ${price.toLocaleString('fr-FR')} FCFA`,`Statut du paiement : ${status==='paye'?'Payé':status==='partiel'?'Paiement partiel':'Non payé'}`,`Montant reçu : ${received.toLocaleString('fr-FR')} FCFA`,`Montant restant : ${r.amountDue.toLocaleString('fr-FR')} FCFA`,method&&`Mode de paiement : ${method}`,`Date du réabonnement : ${fmt(start)}`,`Nouvelle date de fin : ${fmt(end)}`].filter(Boolean).join('\n');if(settings.autoMessage){if(settings.target)shareText(message,settings.target);else shareText(message)}}
+function shareRenewal(id){let r=renewals.find(x=>x.id===id);if(r)shareText(`RÉABONNEMENT CANAL+\nNom : ${r.name}\nTéléphone : ${r.phone}\nNuméro d’abonné : ${r.subscriber}\nFormule : ${r.plan}\nDate : ${fmt(r.date)}\nNouvelle date de fin : ${fmt(r.end)}`,settings.target||'')}
+let recruitFilter='all';
+function setRecruitFilter(f){recruitFilter=f;renderRecruitment()}
+function renderRecruitment(){let box=document.getElementById('recruitmentList');if(!box)return;let arr=clients.filter(c=>c.recruitmentType);if(recruitFilter==='nouveau'||recruitFilter==='ancien')arr=arr.filter(c=>c.recruitmentType===recruitFilter);if(recruitFilter==='pending')arr=arr.filter(c=>(c.recruitmentStatus||'pending')!=='done');arr.sort((a,b)=>String(b.recruitmentDate||'').localeCompare(String(a.recruitmentDate||'')));box.innerHTML=arr.length?arr.map(c=>{let done=c.recruitmentStatus==='done';return `<div class="client"><div class="topline"><h3>${esc(c.name)}</h3><span class="pill ${done?'good':'warn'}">${done?'Enregistré dans Canal+':'À traiter'}</span></div><p><b>${c.recruitmentType==='nouveau'?'Nouveau abonné / nouveau recrutement':'Ancien abonné / ancien recrutement'}</b></p><p class="muted">${esc(c.phone)} · Abonné : ${esc(c.subscriber)} · Formule : ${esc(c.plan)}</p><p class="muted">Reçu le ${fmt(c.recruitmentDate)} · Par : ${esc(c.recruitmentOperator||'Utilisateur non renseigné')}</p><div class="actions"><button class="small" onclick="detail('${c.id}')">Voir la fiche</button><button class="small" onclick="shareRecruitment('${c.id}')">Partager WhatsApp</button>${done?`<button class="secondary small" onclick="setRecruitmentStatus('${c.id}','pending')">Remettre à traiter</button>`:`<button class="primary small" onclick="setRecruitmentStatus('${c.id}','done')">Marquer enregistré dans Canal+</button>`}</div></div>`}).join(''):'<div class="empty">Aucun dossier de recrutement dans cette catégorie.</div>'}
+function setRecruitmentStatus(id,status){let c=clients.find(x=>x.id===id);if(!c)return;c.recruitmentStatus=status;c.recruitmentCompletedAt=status==='done'?iso():'';c.recruitmentCompletedBy=status==='done'?(settings.operator||'Utilisateur non renseigné'):'';logAction(status==='done'?'Recrutement marqué enregistré dans Canal+':'Recrutement remis à traiter',c.name+' · Abonné '+c.subscriber);save();renderRecruitment()}
+function shareRecruitment(id){let c=clients.find(x=>x.id===id);if(!c)return;let label=c.recruitmentType==='nouveau'?'NOUVEAU ABONNÉ / NOUVEAU RECRUTEMENT':'ANCIEN ABONNÉ / ANCIEN RECRUTEMENT';shareText([label,`Nom : ${c.name}`,c.phone&&`Téléphone 1 : ${c.phone}`,c.phone2&&`Téléphone 2 : ${c.phone2}`,c.whatsapp&&`WhatsApp client : ${c.whatsapp}`,c.subscriber&&`Numéro d’abonné : ${c.subscriber}`,c.decoder&&`Numéro du décodeur : ${c.decoder}`,c.location&&`Adresse : ${c.location}`,`Formule : ${c.plan}`,`Prix de l’abonnement : ${Number(c.planPrice||PLAN_PRICES[c.plan]||0).toLocaleString('fr-FR')} FCFA`,`Date : ${fmt(c.recruitmentDate)}`,`Statut : ${c.recruitmentStatus==='done'?'Enregistré dans Canal+':'À traiter'}`,`Ajouté par : ${c.recruitmentOperator||'Utilisateur non renseigné'}`].filter(Boolean).join('\n'),settings.target||'')}
+function saveSettings(){settings={...settings,target:val('target').replace(/\D/g,''),shop:val('shop'),operator:val('operator'),autoMessage:document.getElementById('autoMessage').checked};localStorage.setItem(SK,JSON.stringify(settings));logAction('Paramètres modifiés','Réglages locaux mis à jour');alert('Paramètres enregistrés sur cet appareil.')}
+function exportCSV(){let fields=['name','phone','phone2','whatsapp','subscriber','decoder','location','plan','planPrice','start','end','amountReceived','amountDue','paymentStatus','paymentMethod','recruitmentType','recruitmentStatus','notes'];let rows=[fields,...clients.map(c=>fields.map(k=>c[k]||''))];let csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='clients-canal-plus.csv';a.click();URL.revokeObjectURL(a.href)}
+function downloadFile(name,content,type){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function exportBackup(){downloadFile('sauvegarde-canal-plus.json',JSON.stringify({version:7,exportedAt:new Date().toISOString(),clients,renewals,settings,activity},null,2),'application/json')}
+function importBackup(event){let file=event.target.files&&event.target.files[0];if(!file)return;let reader=new FileReader();reader.onload=()=>{try{let data=JSON.parse(reader.result);if(!Array.isArray(data.clients)||!Array.isArray(data.renewals)||typeof data.settings!=='object')throw new Error('format');if(!confirm('Restaurer cette sauvegarde ? Les données actuelles seront remplacées.'))return;clients=data.clients.map(c=>({...c,plan:PLAN_MAP[c.plan]||c.plan}));renewals=data.renewals.map(r=>({...r,plan:PLAN_MAP[r.plan]||r.plan}));settings=data.settings||{};activity=Array.isArray(data.activity)?data.activity:[];localStorage.setItem(AK,JSON.stringify(activity));localStorage.setItem(KEY,JSON.stringify(clients));localStorage.setItem(RK,JSON.stringify(renewals));localStorage.setItem(SK,JSON.stringify(settings));render();alert('Sauvegarde restaurée.');tab('home')}catch(e){alert('Fichier de sauvegarde invalide ou illisible.')}};reader.readAsText(file);event.target.value=''}
+async function cloudLogin(){
+  const msg=document.getElementById('cloudMessage');
+  if(!cloudClient){msg.textContent='La bibliothèque Supabase ne s’est pas chargée. Vérifie la connexion Internet et ouvre le fichier dans un navigateur qui autorise les scripts externes.';return}
+  const email=document.getElementById('cloudEmail').value.trim(), password=document.getElementById('cloudPassword').value;
+  if(!email||!password){msg.textContent='Saisis ton adresse e-mail et le mot de passe de ton compte Supabase.';return}
+  msg.textContent='Connexion en cours…';
+  const {data,error}=await cloudClient.auth.signInWithPassword({email,password});
+  if(error){msg.textContent='Connexion refusée : '+error.message;return}
+  document.getElementById('cloudPassword').value='';
+  showCloudConnected(data.user,'Compte connecté. La session est enregistrée sur cet appareil. Synchronisation initiale en cours…');
+  cloudSync(true);
+}
+async function cloudLogout(){if(cloudClient) await cloudClient.auth.signOut();cloudUser=null;document.getElementById('cloudStatus').textContent='Non connecté';document.getElementById('cloudStatus').className='pill warn';document.getElementById('cloudMessage').textContent='Déconnecté. Les données locales restent sur cet appareil.'}
+let autoSyncTimer=null, cloudDirtyUntil=0, cloudPullTimer=null;
+function showCloudConnected(user,message='Compte connecté. La session sera conservée sur cet appareil.'){cloudUser=user;const status=document.getElementById('cloudStatus');status.textContent='Connecté : '+(user?.email||'compte Supabase');status.className='pill good';document.getElementById('cloudMessage').textContent=message;startCloudPolling();}
+function startCloudPolling(){if(cloudPullTimer)return;cloudPullTimer=setInterval(async()=>{if(!cloudUser||cloudBusy||Date.now()<cloudDirtyUntil)return;try{const {data:member,error:me}=await cloudClient.from('workspace_members').select('workspace_id').eq('workspace_id',WORKSPACE_ID).eq('user_id',cloudUser.id).maybeSingle();if(me||!member)return;const {data:rc,error:ce}=await cloudClient.from('clients').select('data').eq('workspace_id',WORKSPACE_ID);if(ce)throw ce;const {data:rr,error:re}=await cloudClient.from('renewals').select('data').eq('workspace_id',WORKSPACE_ID);if(re)throw re;const merge=(local,remote)=>{const m=new Map((remote||[]).filter(x=>x.data&&x.data.id!==undefined).map(x=>[String(x.data.id),x.data]));for(const x of local){if(!m.has(String(x.id)))m.set(String(x.id),x)}return [...m.values()]};const nc=merge(clients,rc),nr=merge(renewals,rr);if(JSON.stringify(nc)!==JSON.stringify(clients)||JSON.stringify(nr)!==JSON.stringify(renewals)){clients=nc;renewals=nr;localStorage.setItem(KEY,JSON.stringify(clients));localStorage.setItem(RK,JSON.stringify(renewals));render();document.getElementById('cloudMessage').textContent='Données partagées actualisées automatiquement.';}}catch(e){/* Keep local data during temporary network failures. */}},12000);}
+function scheduleAutoSync(){
+  cloudDirtyUntil=Date.now()+5000;
+  if(autoSyncTimer)clearTimeout(autoSyncTimer);
+  autoSyncTimer=setTimeout(()=>{if(cloudUser)cloudSync(true);},900);
+}
+async function cloudSync(silent=false){
+  const msg=document.getElementById('cloudMessage');
+  if(!cloudClient||!cloudUser){msg.textContent='Connecte-toi d’abord avec ton compte Supabase.';return}
+  if(cloudBusy)return;
+  if(!silent&&!confirm('La synchronisation va fusionner les fiches locales et les fiches du point de vente partagé. Elle ne supprimera pas les fiches distantes. Continuer ?'))return;
+  cloudBusy=true;if(!silent)msg.textContent='Synchronisation en cours…';
+  try{
+    const {data:member,error:me}=await cloudClient.from('workspace_members').select('workspace_id,role').eq('workspace_id',WORKSPACE_ID).eq('user_id',cloudUser.id).maybeSingle();
+    if(me)throw me;if(!member)throw new Error('Ce compte n’est pas membre de l’espace de travail partagé.');
+    async function syncCollection(table,localRows){
+      const {data:remote,error}=await cloudClient.from(table).select('id,data,created_by,updated_by').eq('workspace_id',WORKSPACE_ID);
+      if(error)throw error;
+      const byLocal=new Map((remote||[]).map(row=>[String(row.data?.id??''),row]));
+      for(const item of localRows){
+        const key=String(item.id??''); const found=byLocal.get(key);
+        const payload={workspace_id:WORKSPACE_ID,data:item};
+        if(found){
+          const patch=table==='clients'?{data:item,updated_by:cloudUser.id}:{data:item};
+          const {error:e}=await cloudClient.from(table).update(patch).eq('id',found.id).eq('workspace_id',WORKSPACE_ID);if(e)throw e;
+        }else{
+          if(table==='clients')payload.created_by=cloudUser.id;
+          if(table==='renewals')payload.created_by=cloudUser.id;
+          const {error:e}=await cloudClient.from(table).insert(payload);if(e)throw e;
+        }
+      }
+      const {data:after,error:e2}=await cloudClient.from(table).select('id,data').eq('workspace_id',WORKSPACE_ID);if(e2)throw e2;
+      const merged=new Map();
+      for(const row of (after||[])){if(row.data && row.data.id!==undefined)merged.set(String(row.data.id),row.data)}
+      for(const item of localRows){if(!merged.has(String(item.id??'')))merged.set(String(item.id??''),item)}
+      return [...merged.values()];
+    }
+    clients=await syncCollection('clients',clients);
+    renewals=await syncCollection('renewals',renewals);
+    localStorage.setItem(KEY,JSON.stringify(clients));localStorage.setItem(RK,JSON.stringify(renewals));render();
+    if(!silent)msg.textContent='Synchronisation terminée. Clients : '+clients.length+' ; réabonnements : '+renewals.length+'.';else msg.textContent='Synchronisation automatique terminée. Clients : '+clients.length+' ; réabonnements : '+renewals.length+'.';
+  }catch(e){msg.textContent='Synchronisation non terminée : '+(e.message||String(e))+'. Les données locales sont conservées. Vérifie Internet et réessaie.'}
+  finally{cloudBusy=false}
+}
+render();
+// Restore the saved Supabase session when this file is reopened.
+(async()=>{
+  if(!cloudClient)return;
+  try{
+    const {data,error}=await cloudClient.auth.getSession();
+    if(error)throw error;
+    if(data.session?.user){
+      showCloudConnected(data.session.user,'Session restaurée automatiquement. Synchronisation des données…');
+      cloudSync(true);
+    }
+  }catch(e){document.getElementById('cloudMessage').textContent='Session non restaurée automatiquement. Connecte-toi une fois ; si cela se répète, vérifie que Chrome conserve les données du site.';}
+})();
+</script></body></html>
