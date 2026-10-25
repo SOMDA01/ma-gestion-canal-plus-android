@@ -33,9 +33,6 @@ jobs:
 
       - name: Compiler le fichier APK
         run: |
-          cd android-project
-          find . -name build.gradle -type f
-        run: |
           cd android-project/MaGestionCanalPlus
           gradle assembleDebug
 
