@@ -1,50 +1,69 @@
 name: Build Android APK
 
 'on':
-  workflow_dispatch:
-  push:
-    paths:
-      - 'MaGestionCanalPlusAndroid_projet_corrige.zip'
-      - '.github/workflows/android.yml'
+workflow_dispatch:
+push:
+paths:
+- 'MaGestionCanalPlusAndroid_projet_corrige.zip'
+- '.github/workflows/android.yml'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+build:
+runs-on: ubuntu-latest
 
-    steps:
-      - name: Recuperer le projet
-        uses: actions/checkout@v4
+steps:
+  - name: Recuperer le projet
+    uses: actions/checkout@v4
 
-      - name: Installer Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
+  - name: Installer Java
+    uses: actions/setup-java@v4
+    with:
+      distribution: temurin
+      java-version: '17'
 
-      - name: Installer Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.7'
+  - name: Installer Gradle
+    uses: gradle/actions/setup-gradle@v4
+    with:
+      gradle-version: '8.7'
 
-      - name: Extraire le projet Android
-        run: |
-          unzip -o MaGestionCanalPlusAndroid_projet_corrige.zip -d android-project
-          find android-project -maxdepth 3 -type f
+  - name: Extraire le projet Android
+    run: |
+      mkdir -p android-project
+      unzip -o MaGestionCanalPlusAndroid_projet_corrige.zip -d android-project
+      echo "Contenu du projet extrait :"
+      find android-project -maxdepth 5 -type f | head -200
 
-      - name: Compiler le fichier APK
-        run: |
-          cd android-project
-          find . -name build.gradle -type f
+  - name: Rechercher le projet Gradle
+    id: find_project
+    run: |
+      PROJECT_DIR="$(dirname "$(find android-project -type f -name settings.gradle -o -name settings.gradle.kts -print -quit)")"
 
-      - name: Publier le fichier APK
-  uses: actions/upload-artifact@v4
-  with:
-  name: Gestion-Canal-Plus-APK
-  path: android-project/**/*.apk
-  if-no-files-found: error
-- name: Publier le fichier APK
-  uses: actions/upload-artifact@v4
-  with:
-  name: Gestion-Canal-Plus-APK
-  path: android-project/**/*.apk
-  if-no-files-found: error
+      if [ -z "$PROJECT_DIR" ] || [ "$PROJECT_DIR" = "." ]; then
+        echo "ERREUR : aucun fichier settings.gradle ou settings.gradle.kts trouvé."
+        echo "Le ZIP ne semble pas contenir un projet Android Gradle complet."
+        exit 1
+      fi
+
+      echo "Projet Gradle trouvé dans : $PROJECT_DIR"
+      echo "project_dir=$PROJECT_DIR" >> "$GITHUB_OUTPUT"
+
+  - name: Compiler le fichier APK
+    run: |
+      gradle -p "${{ steps.find_project.outputs.project_dir }}" assembleDebug
+
+  - name: Vérifier la présence de l'APK
+    run: |
+      echo "Recherche du fichier APK..."
+      find android-project -type f -name "*.apk"
+
+      if ! find android-project -type f -name "*.apk" -print -quit | grep -q .; then
+        echo "ERREUR : aucun APK n'a été généré."
+        exit 1
+      fi
+
+  - name: Publier le fichier APK
+    uses: actions/upload-artifact@v4
+    with:
+      name: Gestion-Canal-Plus-APK
+      path: android-project/**/*.apk
+      if-no-files-found: error
