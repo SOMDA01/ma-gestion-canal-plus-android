@@ -4,7 +4,6 @@ name: Build Android APK
 workflow_dispatch:
 push:
 paths:
-
 - 'MaGestionCanalPlusAndroid_projet_corrige.zip'
 - '.github/workflows/android.yml'
 
@@ -13,39 +12,52 @@ build:
 runs-on: ubuntu-latest
 
 steps:
+  - name: Recuperer le projet
+    uses: actions/checkout@v4
 
-- name: Recuperer le projet
-  uses: actions/checkout@v4
+  - name: Installer Java
+    uses: actions/setup-java@v4
+    with:
+      distribution: temurin
+      java-version: '17'
 
-- name: Installer Java
-  uses: actions/setup-java@v4
-  with:
-  distribution: temurin
-  java-version: '17'
+  - name: Installer Gradle
+    uses: gradle/actions/setup-gradle@v4
+    with:
+      gradle-version: '8.7'
 
-- name: Installer Gradle
-  uses: gradle/actions/setup-gradle@v4
-  with:
-  gradle-version: '8.7'
+  - name: Extraire le projet Android
+    run: |
+      mkdir -p android-project
+      unzip -o MaGestionCanalPlusAndroid_projet_corrige.zip -d android-project
+      echo "Contenu du projet :"
+      find android-project -maxdepth 5 -type f | head -200
 
-- name: Extraire le projet Android
-  run: |
-  unzip -o MaGestionCanalPlusAndroid_projet_corrige.zip -d android-project
-  find android-project -maxdepth 3 -type f
+  - name: Rechercher le fichier de configuration Android
+    id: find_project
+    run: |
+      SETTINGS_FILE=$(find android-project -type f -name settings.gradle -o -name settings.gradle.kts -print -quit)
+      if [ -z "$SETTINGS_FILE" ]; then
+        echo "ERREUR : aucun fichier settings.gradle ou settings.gradle.kts trouvé."
+        exit 1
+      fi
+      PROJECT_DIR=$(dirname "$SETTINGS_FILE")
+      echo "project_dir=$PROJECT_DIR" >> "$GITHUB_OUTPUT"
+      echo "Projet Android trouvé dans : $PROJECT_DIR"
 
-- name: Compiler le fichier APK
-  run: |
-  cd android-project
-  find . -name build.gradle -type f
+  - name: Compiler le fichier APK
+    working-directory: ${{ steps.find_project.outputs.project_dir }}
+    run: |
+      gradle assembleDebug
 
-- name: Rechercher le fichier APK
-  run: |
-  echo "Recherche des fichiers APK générés :"
-  find android-project -type f -name "*.apk" -print
+  - name: Rechercher le fichier APK
+    run: |
+      echo "Recherche des fichiers APK générés :"
+      find android-project -type f -name "*.apk" -print
 
   - name: Publier le fichier APK
     uses: actions/upload-artifact@v4
     with:
-    name: Gestion-Canal-Plus-APK
-    path: android-project/**/*.apk
-    if-no-files-found: error
+      name: Gestion-Canal-Plus-APK
+      path: android-project/**/*.apk
+      if-no-files-found: error
