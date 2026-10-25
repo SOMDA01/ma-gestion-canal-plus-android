@@ -33,6 +33,9 @@ jobs:
 
       - name: Compiler le fichier APK
         run: |
+          echo "Recherche des fichiers du projet Android..."
+          find android-project -maxdepth 5 -type f \( -name "settings.gradle" -o -name "settings.gradle.kts" -o -name "build.gradle" -o -name "build.gradle.kts" \)
+        run: |
           cd android-project/MaGestionCanalPlus
           gradle assembleDebug
 
