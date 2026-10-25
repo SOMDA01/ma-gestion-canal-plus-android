@@ -10,9 +10,10 @@ paths:
 jobs:
 build:
 runs-on: ubuntu-latest
+
 steps:
-- name: Recuperer le projet
-uses: actions/checkout@v4
+  - name: Recuperer le projet
+    uses: actions/checkout@v4
 
   - name: Installer Java
     uses: actions/setup-java@v4
@@ -28,13 +29,9 @@ uses: actions/checkout@v4
   - name: Extraire le projet Android
     run: |
       unzip -o MaGestionCanalPlusAndroid_projet_corrige.zip -d android-project
-      find android-project -name build.gradle -type f
+      find android-project -type f -name "settings.gradle" -o -name "settings.gradle.kts"
 
-  - name: Rechercher le projet Android
-    run: |
-      find android-project -name settings.gradle -o -name settings.gradle.kts
-
-  - name: Compiler le fichier APK
+  - name: Compiler le projet Android
     run: |
       cd android-project
       gradle assembleDebug
@@ -43,5 +40,5 @@ uses: actions/checkout@v4
     uses: actions/upload-artifact@v4
     with:
       name: Gestion-Canal-Plus-APK
-      path: android-project/**/*.apk
+      path: android-project/**/build/outputs/apk/debug/*.apk
       if-no-files-found: error
