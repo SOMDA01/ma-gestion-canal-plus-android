@@ -1,6 +1,6 @@
 name: Build Android APK
 
-on:
+'on':
 workflow_dispatch:
 push:
 paths:
@@ -10,10 +10,9 @@ paths:
 jobs:
 build:
 runs-on: ubuntu-latest
-
 steps:
-  - name: Recuperer le projet
-    uses: actions/checkout@v4
+- name: Recuperer le projet
+uses: actions/checkout@v4
 
   - name: Installer Java
     uses: actions/setup-java@v4
