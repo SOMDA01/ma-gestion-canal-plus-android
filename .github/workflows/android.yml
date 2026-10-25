@@ -36,17 +36,14 @@ steps:
       cd android-project  
       find . -name build.gradle -type f  
 
+- name: Rechercher le fichier APK
+  run: |
+  echo "Recherche des fichiers APK générés :"
+  find android-project -type f -name "*.apk" -print
+  
   - name: Publier le fichier APK
-
-uses: actions/upload-artifact@v4
-with:
-name: Gestion-Canal-Plus-APK
-path: android-project/**/*.apk
-if-no-files-found: error
-
-- name: Publier le fichier APK
   uses: actions/upload-artifact@v4
   with:
-  name: Gestion-Canal-Plus-APK
-  path: android-project/**/*.apk
-  if-no-files-found: error
+    name: Gestion-Canal-Plus-APK
+    path: android-project/**/*.apk
+    if-no-files-found: error
