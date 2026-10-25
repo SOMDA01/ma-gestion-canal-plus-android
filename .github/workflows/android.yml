@@ -1,41 +1,44 @@
 name: Build Android APK
 
 on:
-  workflow_dispatch:
+workflow_dispatch:
+push:
+paths:
+- 'MaGestionCanalPlusAndroid_projet_corrige.zip'
+- '.github/workflows/android.yml'
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+build:
+runs-on: ubuntu-latest
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
+steps:
+  - name: Recuperer le projet
+    uses: actions/checkout@v4
 
-      - name: Extract Android project
-        run: |
-          unzip -o MaGestionCanalPlusAndroid_projet_corrige.zip -d android-project
-          find android-project -name gradlew -type f
-          PROJECT_DIR="$(dirname "$(find android-project -name gradlew -type f | head -n 1)")"
-          if [ -z "$PROJECT_DIR" ] || [ ! -f "$PROJECT_DIR/gradlew" ]; then
-            echo "Fichier gradlew introuvable dans le ZIP"
-            exit 1
-          fi
-          chmod +x "$PROJECT_DIR/gradlew"
-          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+  - name: Installer Java
+    uses: actions/setup-java@v4
+    with:
+      distribution: temurin
+      java-version: '17'
 
-      - name: Build APK
-        run: |
-          cd "$PROJECT_DIR"
-          ./gradlew assembleDebug
+  - name: Installer Gradle
+    uses: gradle/actions/setup-gradle@v4
+    with:
+      gradle-version: '8.7'
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Gestion-Canal-Plus-APK
-          path: android-project/**/build/outputs/apk/debug/*.apk
-          if-no-files-found: error
+  - name: Extraire le projet Android
+    run: |
+      unzip -o MaGestionCanalPlusAndroid_projet_corrige.zip -d android-project
+      find android-project -type f | head -80
+
+  - name: Compiler le fichier APK
+    run: |
+      cd android-project
+      gradle assembleDebug
+
+  - name: Publier le fichier APK
+    uses: actions/upload-artifact@v4
+    with:
+      name: Gestion-Canal-Plus-APK
+      path: android-project/**/build/outputs/apk/debug/*.apk
+      if-no-files-found: error
