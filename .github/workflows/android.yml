@@ -30,6 +30,10 @@ uses: actions/checkout@v4
       unzip -o MaGestionCanalPlusAndroid_projet_corrige.zip -d android-project
       find android-project -name build.gradle -type f
 
+  - name: Rechercher le projet Android
+    run: |
+      find android-project -name settings.gradle -o -name settings.gradle.kts
+
   - name: Compiler le fichier APK
     run: |
       cd android-project
