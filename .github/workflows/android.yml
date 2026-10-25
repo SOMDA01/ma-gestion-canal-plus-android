@@ -24,7 +24,7 @@ jobs:
       - name: Installer Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.7'
+          gradle-version: '8.9'
 
       - name: Extraire le projet Android
         run: |
@@ -33,15 +33,12 @@ jobs:
 
       - name: Compiler le fichier APK
         run: |
-          echo "Recherche des fichiers du projet Android..."
-          find android-project -maxdepth 5 -type f \( -name "settings.gradle" -o -name "settings.gradle.kts" -o -name "build.gradle" -o -name "build.gradle.kts" \)
-        run: |
-          cd android-project/MaGestionCanalPlus
+          cd android-project/MaGestionCanalPlusAndroid
           gradle assembleDebug
 
       - name: Publier le fichier APK
         uses: actions/upload-artifact@v4
         with:
           name: Gestion-Canal-Plus-APK
-          path: android-project/MaGestionCanalPlus/app/build/outputs/apk/debug/*.apk
+          path: android-project/MaGestionCanalPlusAndroid/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
