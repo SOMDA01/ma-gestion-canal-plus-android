@@ -1,6 +1,6 @@
 name: Build Android APK
 
-'on':
+on:
 workflow_dispatch:
 push:
 paths:
@@ -30,38 +30,29 @@ steps:
     run: |
       mkdir -p android-project
       unzip -o MaGestionCanalPlusAndroid_projet_corrige.zip -d android-project
-      echo "Contenu du projet extrait :"
+      echo "Fichiers du projet :"
       find android-project -maxdepth 5 -type f | head -200
 
   - name: Rechercher le projet Gradle
     id: find_project
+    shell: bash
     run: |
-      PROJECT_DIR="$(dirname "$(find android-project -type f -name settings.gradle -o -name settings.gradle.kts -print -quit)")"
+      SETTINGS_FILE="$(find android-project -type f -name settings.gradle -o -name settings.gradle.kts -print -quit)"
 
-      if [ -z "$PROJECT_DIR" ] || [ "$PROJECT_DIR" = "." ]; then
-        echo "ERREUR : aucun fichier settings.gradle ou settings.gradle.kts trouvé."
-        echo "Le ZIP ne semble pas contenir un projet Android Gradle complet."
+      if [ -z "$SETTINGS_FILE" ]; then
+        echo "ERREUR : aucun fichier settings.gradle trouvé dans le ZIP."
         exit 1
       fi
 
-      echo "Projet Gradle trouvé dans : $PROJECT_DIR"
+      PROJECT_DIR="$(dirname "$SETTINGS_FILE")"
+      echo "Projet Gradle trouvé : $PROJECT_DIR"
       echo "project_dir=$PROJECT_DIR" >> "$GITHUB_OUTPUT"
 
   - name: Compiler le fichier APK
     run: |
       gradle -p "${{ steps.find_project.outputs.project_dir }}" assembleDebug
 
-  - name: Vérifier la présence de l'APK
-    run: |
-      echo "Recherche du fichier APK..."
-      find android-project -type f -name "*.apk"
-
-      if ! find android-project -type f -name "*.apk" -print -quit | grep -q .; then
-        echo "ERREUR : aucun APK n'a été généré."
-        exit 1
-      fi
-
-  - name: Publier le fichier APK
+  - name: Rechercher et publier le fichier APK
     uses: actions/upload-artifact@v4
     with:
       name: Gestion-Canal-Plus-APK
