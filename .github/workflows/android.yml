@@ -31,10 +31,7 @@ jobs:
           unzip -o MaGestionCanalPlusAndroid_projet_corrige.zip -d android-project
           find android-project -maxdepth 3 -type f
 
-      -       - name: Compiler le fichier APK
-        run: |
-          cd android-project/MaGestionCanalPlus
-          gradle assembleDebug
+      - name: Compiler le fichier APK
         run: |
           cd android-project/MaGestionCanalPlus
           gradle assembleDebug
