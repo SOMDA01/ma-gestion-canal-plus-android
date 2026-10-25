@@ -1,0 +1,43 @@
+
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Extract Android project
+        run: |
+          unzip -o "MaGestionCanalPlusAndroid_projet_corrige.zip" -d android-project
+          find android-project -name gradlew -type f
+          PROJECT_DIR="$(find android-project -name settings.gradle -printf '%h\n' | head -n 1)"
+          if [ -z "$PROJECT_DIR" ]; then
+            echo "Fichier settings.gradle introuvable dans le ZIP"
+            exit 1
+          fi
+          chmod +x "$PROJECT_DIR/gradlew"
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+
+      - name: Build APK
+        run: |
+          cd "$PROJECT_DIR"
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Gestion-Canal-Plus-APK
+          path: android-project/**/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          
