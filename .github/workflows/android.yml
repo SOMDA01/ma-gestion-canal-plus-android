@@ -7,7 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -44,4 +43,3 @@ jobs:
           name: Gestion-Canal-Plus-APK
           path: android-project/**/build/outputs/apk/debug/*.apk
           if-no-files-found: error
-          
